@@ -8,6 +8,8 @@ const uuid = require('uuid').v4;
 const path = require('path');
 
 const app = express();
+const cors = require('cors');
+app.use(cors())
 
 const s3 = new aws.S3({apiVersion: '2006-03-01'});
 
@@ -17,6 +19,7 @@ const upload = multer({
         bucket: 'postimagebucket',
         acl: 'public-read',
         metadata: (req, file, cb) => {
+            console.log(file);
             cb(null, { fieldName: file.fieldname });
         },
         key: (req, file, cb) => {
@@ -30,8 +33,10 @@ app.use(express.static('public'));
 
 
 app.post('/upload', upload.single('avatar'), (req, res) =>{
-    console.log(req.file.location)
-    return res.json({ status: 'OK', uploaded: req.files});
+    // console.log(req.body);
+    // console.log(req.file.location);
+    return res.send({fileurl:req.file.location});
+
 });
 
 
