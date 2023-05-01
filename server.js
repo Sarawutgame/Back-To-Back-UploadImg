@@ -93,6 +93,10 @@ const UserSchema = new mongoose.Schema({
     },
     line: {
       type: String,
+    },
+    imageuserpath: {
+      type: String,
+      default:'https://postimagebucket.s3.amazonaws.com/e3fa12a0-77c0-48d0-ad6c-26771ee872bf.jpg'
     }
 });
 const ItemSchema = new mongoose.Schema({
@@ -114,6 +118,19 @@ const ItemSchema = new mongoose.Schema({
     price: {
         type: String,
     },
+    iduser:{
+        type: String,
+    },
+    nameuser:{
+        type: String,
+    },
+    status:{
+        type: String,
+    },
+    daytime:{
+        type:Date,
+        default:Date.now
+    }
 
 })
 const PostSchema = new mongoose.Schema({
@@ -142,13 +159,34 @@ const PostSchema = new mongoose.Schema({
   }
 })
 
+const ReportSchema = new mongoose.Schema({
+  namereport: {
+    type: String,
+  },
+  typereport: {
+    type: String,
+  },
+  desc: {
+    type: String,
+  },
+  time: {
+    type: Date,
+    default: Date.now,
+  },
+  iditem:{
+    type:String,
+  }
+})
+
 const User = mongoose.model("users", UserSchema);
-const Item = mongoose.model("item", ItemSchema);
-const Post = mongoose.model("post", PostSchema);
+const Item = mongoose.model("items", ItemSchema);
+const Post = mongoose.model("posts", PostSchema);
+const Report = mongoose.model('reports', ReportSchema);
 
 User.createIndexes();
 Item.createIndexes();
 Post.createIndexes();
+Report.createIndexes();
 
 mongoose.connection.on(
     "error",
@@ -165,13 +203,36 @@ app.get("/", (req, res) => {
 
 app.get("/userById/:id", async (req, res) => {
   try {
-    console.log(req.body.userId)
+    // console.log(req.body.userId)
     const user = await User.findById(req.params.id);
-    console.log(user);
+    // console.log(user);
     res.send(user);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error finding user");
+  }
+});
+
+app.get("/allitem", async (req, res) => {
+  try {
+    const allitem = await Item.find();
+    // console.log("1234");
+    res.send(allitem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Can't Find Item");
+  }
+});
+
+app.get("/getitem/:id", async (req, res) => {
+  try {
+    // console.log(req.params.id);
+    const detailitem = await Item.findById(req.params.id);
+
+    res.send(detailitem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Can't Find Item");
   }
 });
 
@@ -229,12 +290,30 @@ app.post("/createPost", async (req, res) => {
   }
 })
 
+app.post("/createReport", async (req, res) => {
+  try{
+    const report = new Report(req.body);
+    console.log(req.body);
+    let result = await report.save();
+    result = result.toObject();
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create report");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
+
 app.post('/upload', upload.single('avatar'), (req, res) =>{
     // console.log(req.body);
     // console.log(req.file.location);
     return res.send({fileurl:req.file.location});
-
 });
+
+
 
 app.post('/uploadProfile', uploadProfile.single('avatar'), (req, res) => {
   return res.send({fileurl: req.file.location});
