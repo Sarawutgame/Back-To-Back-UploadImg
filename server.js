@@ -32,7 +32,7 @@ const upload = multer({
 // To connect with your mongoDB database
 const mongoose = require("mongoose");
 mongoose
-  .connect("mongodb://localhost:27017", {
+  .connect("mongodb://34.194.191.197:27017", {
     dbName: 'back2back',
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -43,6 +43,9 @@ mongoose
 
 // Schema for users of app
 const UserSchema = new mongoose.Schema({
+    imgPath: {
+      type: String,
+    },
     username: {
       type: String,
       required: true,
@@ -51,6 +54,10 @@ const UserSchema = new mongoose.Schema({
       type: String,
       required: true,
       unique: true,
+    },
+    password: {
+      type: String,
+      required: true
     },
     phone: {
       type: String,
@@ -98,12 +105,39 @@ const ItemSchema = new mongoose.Schema({
     },
 
 })
+const PostSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+  },
+  desc: {
+    type: String,
+  },
+  imgPath: {
+    type: String,
+  },
+  like: {
+    type: Number,
+  },
+  comments: {
+    type: Array,
+  },
+  time: {
+    type: Date,
+    default: Date.now,
+  }
+})
 
 const User = mongoose.model("users", UserSchema);
 const Item = mongoose.model("item", ItemSchema);
+const Post = mongoose.model("post", PostSchema);
 
 User.createIndexes();
 Item.createIndexes();
+Post.createIndexes();
 
 mongoose.connection.on(
     "error",
@@ -114,23 +148,27 @@ app.use(express.json({ limit: "300mb" }));
 
 // app.use(express.static('public'));
 
-// app.post("/register", async (req, resp) => {
-//     try {
-//       const user = new User(req.body);
-//       let result = await user.save();
-//       result = result.toObject();
-//       if (result) {
-//         delete result.password;
-//         resp.send(req.body);
-//         console.log(result);
-//       } else {
-//         console.log("User already registered");
-//       }
-//     } catch (e) {
-//       console.log(e);
-//       resp.send("Something Went Wrong");
-//     }
-// });
+app.get("/", (req, res) => {
+  res.send("app is running")
+})
+
+app.post("/register", async (req, resp) => {
+    try {
+      const user = new User(req.body);
+      let result = await user.save();
+      result = result.toObject();
+      if (result) {
+        delete result.password;
+        resp.send(req.body);
+        console.log(result);
+      } else {
+        console.log("User already registered");
+      }
+    } catch (e) {
+      console.log(e);
+      resp.send("Something Went Wrong");
+    }
+});
 
 app.post("/createItem", async (req, res) => {
     try{
@@ -149,6 +187,22 @@ app.post("/createItem", async (req, res) => {
         console.log(e);
         res.send({status: "Something went wrong"});
     }
+})
+
+app.post("/createPost", async (req, res) => {
+  try{
+    const post = new Post(req.body);
+    let result = await post.save();
+    result = result.toObject();
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create post");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
 })
 
 app.post('/upload', upload.single('avatar'), (req, res) =>{
