@@ -28,6 +28,21 @@ const upload = multer({
         }
     })
 });
+const uploadProfile = multer({
+    storage: multerS3({
+        s3,
+        bucket: 'profileuser-image-buckect',
+        acl: 'public-read',
+        metadata: (req, file, cb) => {
+            console.log(file);
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: (req, file, cb) => {
+            const ext = path.extname(file.originalname);
+            cb(null, `${uuid()}${ext}`);
+        }
+    })
+});
 
 // To connect with your mongoDB database
 const mongoose = require("mongoose");
@@ -64,10 +79,6 @@ const UserSchema = new mongoose.Schema({
       unique: true,
     },
     faculty: {
-      type: String,
-      required: true,
-    },
-    name: {
       type: String,
       required: true,
     },
@@ -152,6 +163,19 @@ app.get("/", (req, res) => {
   res.send("app is running")
 })
 
+app.get("/userById/:id", async (req, res) => {
+  try {
+    console.log(req.body.userId)
+    const user = await User.findById(req.params.id);
+    console.log(user);
+    res.send(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error finding user");
+  }
+});
+
+
 app.post("/register", async (req, resp) => {
     try {
       const user = new User(req.body);
@@ -162,11 +186,11 @@ app.post("/register", async (req, resp) => {
         resp.send(req.body);
         console.log(result);
       } else {
-        console.log("User already registered");
+        console.log({status: "User already registered"});
       }
     } catch (e) {
       console.log(e);
-      resp.send("Something Went Wrong");
+      resp.send({status: "Something Went Wrong"});
     }
 });
 
@@ -211,6 +235,10 @@ app.post('/upload', upload.single('avatar'), (req, res) =>{
     return res.send({fileurl:req.file.location});
 
 });
+
+app.post('/uploadProfile', uploadProfile.single('avatar'), (req, res) => {
+  return res.send({fileurl: req.file.location});
+})
 
 
 app.listen(3005, () => console.log('App Is listening'));
