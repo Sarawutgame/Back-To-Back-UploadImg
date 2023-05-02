@@ -208,6 +208,10 @@ const ReportSchema = new mongoose.Schema({
   },
   iditem:{
     type:String,
+  },
+  statusReport:{
+    type:String,
+    default: 'pending'
   }
 })
 
@@ -627,6 +631,15 @@ app.put("/stopBit", async (req, res) => {
   }
 })
 
+app.get("/getReport", async (req, res) => {
+  try {
+    const allReport = await Report.find();
+    res.send(allReport);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Can't Find Report");
+  }
+});
 
 
 app.post('/uploadProfile', uploadProfile.single('avatar'), (req, res) => {
