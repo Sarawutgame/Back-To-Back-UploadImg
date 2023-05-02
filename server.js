@@ -163,12 +163,32 @@ const PostSchema = new mongoose.Schema({
   like: {
     type: Number,
   },
-  comments: {
-    type: Array,
-  },
+  // comments: {
+  //   type: Array,
+  // },
   time: {
     type: Date,
     default: Date.now,
+  }
+})
+
+const CommentSchema = new mongoose.Schema({
+  postId: {
+    type: String,
+    required: true,
+  },
+  userId: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+  },
+  text: {
+    type: String,
+  },
+  imgPath: {
+    type: String,
   }
 })
 
@@ -267,6 +287,7 @@ const Post = mongoose.model("posts", PostSchema);
 const Report = mongoose.model('reports', ReportSchema);
 const History = mongoose.model('history', HistoryNotiSchema);
 const Receive = mongoose.model('receive', ReceiveNotiSchema);
+const Comment = mongoose.model("comment", CommentSchema);
 
 User.createIndexes();
 Item.createIndexes();
@@ -274,6 +295,7 @@ Post.createIndexes();
 Report.createIndexes();
 History.createIndexes();
 Receive.createIndexes();
+Comment.createIndexes();
 
 mongoose.connection.on(
     "error",
@@ -333,21 +355,47 @@ app.get("/getitem/:id", async (req, res) => {
   }
 });
 
-app.put('/posts/:id', async (req, res) => {
-  try {
-    let updatePost = await Post.updateOne(
-      {_id:req.params.id},
-        {$set:{
-          comments: req.body.comments
-        }})
+app.get("/getPostComment/:id", async (req, res) => {
+  try{
+    const comments = await Comment.find({"postId": req.params.id})
+    res.send(comments);
+  } catch (err) {
+    console.log(e);
+    res.send({status: "Something went wrong"});
+  }
+})
 
-    if (updatePost) {
-      res.send(req.body)
+// app.put('/posts/:id', async (req, res) => {
+//   try {
+//     let updatePost = await Post.updateOne(
+//       {_id:req.params.id},
+//         {$set:{
+//           comments: req.body.comments
+//         }})
+
+//     if (updatePost) {
+//       res.send(req.body)
+//     } else {
+//       console.log("Can't create comment");
+//     }
+//   } catch (err) {
+//     res.status(500).send('Server Error');
+//   }
+// })
+
+app.post("/comment", async (req, res) => {
+  try{
+    const comment = new Comment(req.body);
+    let result = await comment.save();
+    result = result.toObject();
+    if (result) {
+      res.send(result)
     } else {
       console.log("Can't create comment");
     }
-  } catch (err) {
-    res.status(500).send('Server Error');
+  } catch (e) {
+    console.log(e);
+    res.send({status: "Something went wrong"});
   }
 })
 
