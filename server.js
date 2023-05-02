@@ -11,6 +11,13 @@ const app = express();
 const cors = require('cors');
 app.use(cors())
 
+aws.config.update({
+    region: 'us-east-1',
+    aws_access_key_id:'ASIAQ6W6DD7SK2HDJQRF',
+    aws_secret_access_key:'1xWv6dfANmUcRRCq/bwjIBrLT2Wng2Cf/wzUVNgy',
+    aws_session_token:'FwoGZXIvYXdzEMv//////////wEaDNp4lsd/BBToIDTNzyLIAUYYwJ2reQmSIL94Lt9R3TN0S+SwUgXVgepclhZp6gJSfQXQkqrji3HtOoG2PiA03wxferaTRSDpTnLyE7cFLLjht7E8js2XNzJ4U4oozTnG7ChscXZ4aNsl/THNIKQLVpQiL81G5rEusdeAR1QgCix7g/czBZ+MpDc9N62+VpoXBj7MLAc5u0xrUgm+WX6LwcF/qALqODxxbvOzUVMikR7xwkJnZIpDOVG+6j3WjEG/CM9Bl7GNLYDzCGR3eM/NeXdoppM9TXxoKMKFxaIGMi23qNCxxG2I3wWWtuNhRmWa+4ZA9acrr4+U0Gsnl6MsVKO0ep6wnuSBzPRlTGk='
+})
+
 const s3 = new aws.S3({apiVersion: '2006-03-01'});
 
 const upload = multer({
