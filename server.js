@@ -178,15 +178,83 @@ const ReportSchema = new mongoose.Schema({
   }
 })
 
+const HistoryNotiSchema = new mongoose.Schema({
+  iduser: {
+    type: String,
+  },
+  nameitem: {
+    type: String,
+  },
+  iditem:{
+    type:String,
+  },
+  time: {
+    type: Date,
+    default: Date.now,
+  },
+  usernamepost:{
+    type:String,
+  },
+  useridpost:{
+    type:String,
+  },
+  itemtype:{
+    type:String,
+  },
+  notistatus:{
+    type:String,
+    default: 'wait',
+  },
+  imageURL:{
+    type:String,
+  },
+})
+
+const ReceiveNotiSchema = new mongoose.Schema({
+  iduser: {
+    type: String,
+  },
+  iditem:{
+    type:String,
+  },
+  nameitem: {
+    type: String,
+  },
+  time: {
+    type: Date,
+    default: Date.now,
+  },
+  usernamerequest:{
+    type:String,
+  },
+  useridrequest:{
+    type:String,
+  },
+  itemtype:{
+    type:String,
+  },
+  requeststatus:{
+    type:String,
+    default: 'wait',
+  },
+  imageURL:{
+    type:String,
+  },
+})
+
 const User = mongoose.model("users", UserSchema);
 const Item = mongoose.model("items", ItemSchema);
 const Post = mongoose.model("posts", PostSchema);
 const Report = mongoose.model('reports', ReportSchema);
+const History = mongoose.model('history', HistoryNotiSchema);
+const Receive = mongoose.model('receive', ReceiveNotiSchema);
 
 User.createIndexes();
 Item.createIndexes();
 Post.createIndexes();
 Report.createIndexes();
+History.createIndexes();
+Receive.createIndexes();
 
 mongoose.connection.on(
     "error",
@@ -303,13 +371,117 @@ app.post("/createPost", async (req, res) => {
 app.post("/createReport", async (req, res) => {
   try{
     const report = new Report(req.body);
-    console.log(req.body);
+    // console.log(req.body);
     let result = await report.save();
     result = result.toObject();
     if (result) {
       res.send(req.body);
     } else {
       console.log("Can't create report");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
+
+
+app.post("/createNoti", async (req, res) => {
+  try{
+    const history = new History(req.body);
+    console.log(req.body);
+    let result = await history.save();
+    result = result.toObject();
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create History Noti");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
+
+app.post("/createRequest", async (req, res) => {
+  try{
+    const request = new Receive(req.body);
+    console.log(req.body);
+    let result = await request.save();
+    result = result.toObject();
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create Request Noti");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
+
+
+app.get("/getnotiHistory/:id", async (req, res) => {
+  try {
+    // console.log(req.params.id);
+    // console.log(req.params.id);
+    const notihis = await History.find({iduser: req.params.id});
+    // console.log(notihis);
+    res.send(notihis);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Can't Find Item");
+  }
+});
+
+app.get("/getnotiResive/:id", async (req, res) => {
+  try {
+    // console.log(req.params.id);
+    // const recive = await Receive.findById(req.params.id);
+    const receive = await Receive.find({iduser: req.params.id})
+    console.log(receive);
+    res.send(receive);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Can't Find Item");
+  }
+});
+
+app.put("/updateReceive", async (req, res) => {
+  try{
+    // const request = new Receive(req.body);
+    // console.log(req.body);
+    
+    let result = await Receive.updateMany({iditem: req.body.iditem}, {$set:{requeststatus:'reject'}})
+    let updatestatus = await Receive.updateOne({_id:req.body.idreceive}, {$set:{requeststatus:'accept'}})
+    let UpdateHistory = await History.updateMany({iditem: req.body.iditem}, {$set:{notistatus:'reject'}})
+    let UpdateResult = await History.updateMany({iditem: req.body.iditem, iduser:req.body.useridrequest}, {$set:{notistatus:'accept'}})
+    // result = result.toObject();
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create Request Noti");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
+
+app.put("/updateReceiveReject", async (req, res) => {
+  try{
+    // const request = new Receive(req.body);
+    // console.log(req.body);
+    
+    let result = await Receive.updateMany({iditem: req.body.iditem, useridrequest:req.body.useridrequest}, {$set:{requeststatus:'reject'}})
+    // let updatestatus = await Receive.updateOne({_id:req.body.idreceive}, {$set:{requeststatus:'accept'}})
+    let UpdateHistory = await History.updateMany({iditem: req.body.iditem, iduser:req.body.useridrequest}, {$set:{notistatus:'reject'}})
+    // let UpdateResult = await History.updateMany({iditem: req.body.iditem, }, {$set:{notistatus:'accept'}})
+    // result = result.toObject();
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create Request Noti");
     }
   } catch (e) {
     console.log(e);
