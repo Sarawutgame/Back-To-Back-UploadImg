@@ -585,6 +585,26 @@ app.post('/upload', upload.single('avatar'), (req, res) =>{
     return res.send({fileurl:req.file.location});
 });
 
+app.put("/updateBit", async (req, res) => {
+  try{
+    // console.log(req.body);
+    let updateitem = await Receive.updateOne({iditem:req.body.iditem}, {$set:{bitprice:req.body.bitprice, usernamerequest:req.body.usernamerequest, useridrequest: req.body.useridrequest}})
+    let updatelose = await History.updateMany({iditem: req.body.iditem}, {$set:{notistatus:'lose'}})
+    let updateprice = await Item.updateMany({_id: req.body.iditem}, {$set:{bitprice:req.body.bitprice, iduserwinbit:req.body.usernamerequest}})
+
+
+    // result = result.toObject();
+    if (updateitem) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create Request Noti");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
+
 
 
 app.post('/uploadProfile', uploadProfile.single('avatar'), (req, res) => {
