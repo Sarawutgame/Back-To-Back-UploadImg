@@ -108,7 +108,11 @@ const UserSchema = new mongoose.Schema({
     ban:{
       type: Boolean,
       default:false,
-  },
+    },
+    role:{
+      type:String,
+      default:'member'
+    }
 });
 const ItemSchema = new mongoose.Schema({
     imagePath: {
