@@ -401,6 +401,32 @@ app.put('/posts/:id', async (req, res) => {
   }
 })
 
+app.put('/updateUser/:id', async (req, res) => {
+  try{
+    let updatedUser = await User.updateOne(
+      {_id: req.params.id},
+      {$set: {
+        username: req.body.username,
+        email: req.body.email,
+        phone: req.body.phone,
+        faculty: req.body.faculty,
+        ig: req.body.ig,
+        fb: req.body.fb,
+        twit: req.body.twit,
+        line: req.body.line
+      }}
+    )
+
+    if (updatedUser) {
+      res.send(req.body)
+    } else {
+      console.log("Can't update user");
+    }
+  } catch (err) {
+    console.log(err);
+  }
+})
+
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
