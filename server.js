@@ -151,6 +151,9 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  username: {
+    type: String,
+  },
   type: {
     type: String,
   },
