@@ -314,6 +314,30 @@ app.get("/getitem/:id", async (req, res) => {
   }
 });
 
+app.put('/posts/:id', async (req, res) => {
+  try {
+    let updatePost = await Post.updateOne(
+      {_id:req.params.id},
+        {$set:{
+          userId: req.body.userId,
+          type: req.body.type,
+          desc: req.body.desc,
+          imgPath: req.body.imgPath,
+          like: req.body.like,
+          comments: req.body.comments,
+          time: req.body.time
+        }})
+
+    if (updatePost) {
+      res.send(req.body)
+    } else {
+      console.log("Can't create comment");
+    }
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+})
+
 
 app.post("/register", async (req, resp) => {
     try {
