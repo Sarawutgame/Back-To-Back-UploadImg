@@ -224,6 +224,16 @@ app.get("/allitem", async (req, res) => {
   }
 });
 
+app.get("/allPost", async (req, res) => {
+  try {
+    const allPost = await Post.find();
+    res.send(allPost);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Can't Find Post");
+  }
+})
+
 app.get("/getitem/:id", async (req, res) => {
   try {
     // console.log(req.params.id);
