@@ -97,7 +97,11 @@ const UserSchema = new mongoose.Schema({
     imageuserpath: {
       type: String,
       default:'https://postimagebucket.s3.amazonaws.com/e3fa12a0-77c0-48d0-ad6c-26771ee872bf.jpg'
-    }
+    },
+    ban:{
+      type: Boolean,
+      default:false,
+  },
 });
 const ItemSchema = new mongoose.Schema({
     imagePath: {
@@ -172,7 +176,11 @@ const PostSchema = new mongoose.Schema({
   time: {
     type: Date,
     default: Date.now,
-  }
+  },
+  ban:{
+    type: Boolean,
+    default:false,
+  },
 })
 
 const CommentSchema = new mongoose.Schema({
@@ -662,6 +670,28 @@ app.get("/getReport", async (req, res) => {
     res.status(500).send("Can't Find Report");
   }
 });
+
+app.put("/Banitem", async (req, res) => {
+  try{
+    // console.log(req.body);
+    // let updatereceive = await Receive.updateOne({_id:req.body.notiid}, {$set:{requeststatus:'done'}})
+    // // let updateitem = await Receive.updateOne({iditem:req.body.iditem}, {$set:{bitprice:req.body.bitprice, usernamerequest:req.body.usernamerequest, useridrequest: req.body.useridrequest}})
+    // let updateitem = await Item.updateOne({_id:req.body.iditem}, {$set:{status:'complete'}})
+    // let updatelose = await History.updateMany({iditem: req.body.iditem}, {$set:{notistatus:'lose'}})
+    // let updateprice = await Item.updateMany({_id: req.body.iditem}, {$set:{bitprice:req.body.bitprice, iduserwinbit:req.body.usernamerequest}})
+
+
+    // result = result.toObject();
+    if (updateitem) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create Request Noti");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
 
 
 app.post('/uploadProfile', uploadProfile.single('avatar'), (req, res) => {
