@@ -319,13 +319,7 @@ app.put('/posts/:id', async (req, res) => {
     let updatePost = await Post.updateOne(
       {_id:req.params.id},
         {$set:{
-          userId: req.body.userId,
-          type: req.body.type,
-          desc: req.body.desc,
-          imgPath: req.body.imgPath,
-          like: req.body.like,
-          comments: req.body.comments,
-          time: req.body.time
+          comments: req.body.comments
         }})
 
     if (updatePost) {
