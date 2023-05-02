@@ -375,10 +375,11 @@ app.post("/createItem", async (req, res) => {
         const item = new Item(req.body);
         let result = await item.save();
         // console.log(item);
-        console.log(req.body);
+        
         result = result.toObject();
+        console.log(result);
         if (result) {
-            res.send(req.body);
+            res.send(result);
             // console.log(result);
         } else {
             console.log({status: "Can't create item"});
