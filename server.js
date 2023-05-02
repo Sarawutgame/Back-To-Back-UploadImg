@@ -127,10 +127,23 @@ const ItemSchema = new mongoose.Schema({
     status:{
         type: String,
     },
+    ban:{
+        type: Boolean,
+        default:false,
+    },
+    bitprice:{
+      type: String,
+    },
+    iduserwinbit:{
+        type:String,
+    },
+    nameuserwinbit:{
+        type:String,
+    },
     daytime:{
         type:Date,
-        default:Date.now
-    }
+        default:Date.now,
+    },
 
 })
 const PostSchema = new mongoose.Schema({
@@ -208,6 +221,9 @@ const HistoryNotiSchema = new mongoose.Schema({
   imageURL:{
     type:String,
   },
+  bitprice:{
+    type:String,
+  }
 })
 
 const ReceiveNotiSchema = new mongoose.Schema({
@@ -240,6 +256,9 @@ const ReceiveNotiSchema = new mongoose.Schema({
   imageURL:{
     type:String,
   },
+  bitprice:{
+    type:String,
+  }
 })
 
 const User = mongoose.model("users", UserSchema);
