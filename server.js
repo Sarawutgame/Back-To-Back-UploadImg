@@ -372,23 +372,42 @@ app.get("/getPostComment/:id", async (req, res) => {
   }
 })
 
-// app.put('/posts/:id', async (req, res) => {
-//   try {
-//     let updatePost = await Post.updateOne(
-//       {_id:req.params.id},
-//         {$set:{
-//           comments: req.body.comments
-//         }})
+app.put('/posts/:id', async (req, res) => {
+  try {
+    let updateLike = await Post.updateOne(
+      {_id:req.params.id},
+        {$set:{
+          like: req.body.like
+        }})
 
-//     if (updatePost) {
-//       res.send(req.body)
-//     } else {
-//       console.log("Can't create comment");
-//     }
-//   } catch (err) {
-//     res.status(500).send('Server Error');
-//   }
-// })
+    if (updateLike) {
+      res.send(req.body)
+    } else {
+      console.log("Can't add like");
+    }
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+})
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const alluser = await User.find({});
+    const user = alluser.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (user) {
+      // localStorage.setItem("user", "test");
+      res.send(user);
+    } else {
+      res.send("Wrong id or password");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 app.post("/comment", async (req, res) => {
   try{
