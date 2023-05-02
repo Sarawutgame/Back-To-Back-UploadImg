@@ -605,6 +605,28 @@ app.put("/updateBit", async (req, res) => {
   }
 })
 
+app.put("/stopBit", async (req, res) => {
+  try{
+    // console.log(req.body);
+    let updatereceive = await Receive.updateOne({_id:req.body.notiid}, {$set:{requeststatus:'done'}})
+    // let updateitem = await Receive.updateOne({iditem:req.body.iditem}, {$set:{bitprice:req.body.bitprice, usernamerequest:req.body.usernamerequest, useridrequest: req.body.useridrequest}})
+    let updateitem = await Item.updateOne({_id:req.body.iditem}, {$set:{status:'complete'}})
+    // let updatelose = await History.updateMany({iditem: req.body.iditem}, {$set:{notistatus:'lose'}})
+    // let updateprice = await Item.updateMany({_id: req.body.iditem}, {$set:{bitprice:req.body.bitprice, iduserwinbit:req.body.usernamerequest}})
+
+
+    // result = result.toObject();
+    if (updateitem) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create Request Noti");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
+
 
 
 app.post('/uploadProfile', uploadProfile.single('avatar'), (req, res) => {
