@@ -426,6 +426,7 @@ app.post("/createRequest", async (req, res) => {
     const request = new Receive(req.body);
     console.log(req.body);
     let result = await request.save();
+    let updateitem = await Item.updateOne({_id:req.body.iditem}, {$set:{status:'pending'}})
     result = result.toObject();
     if (result) {
       res.send(req.body);
@@ -474,6 +475,8 @@ app.put("/updateReceive", async (req, res) => {
     let updatestatus = await Receive.updateOne({_id:req.body.idreceive}, {$set:{requeststatus:'accept'}})
     let UpdateHistory = await History.updateMany({iditem: req.body.iditem}, {$set:{notistatus:'reject'}})
     let UpdateResult = await History.updateMany({iditem: req.body.iditem, iduser:req.body.useridrequest}, {$set:{notistatus:'accept'}})
+    let updateitem = await Item.updateOne({_id:req.body.iditem}, {$set:{status:'complete'}})
+
     // result = result.toObject();
     if (result) {
       res.send(req.body);
@@ -494,6 +497,7 @@ app.put("/updateReceiveReject", async (req, res) => {
     let result = await Receive.updateMany({iditem: req.body.iditem, useridrequest:req.body.useridrequest}, {$set:{requeststatus:'reject'}})
     // let updatestatus = await Receive.updateOne({_id:req.body.idreceive}, {$set:{requeststatus:'accept'}})
     let UpdateHistory = await History.updateMany({iditem: req.body.iditem, iduser:req.body.useridrequest}, {$set:{notistatus:'reject'}})
+    let updateitem = await Item.updateOne({_id:req.body.iditem}, {$set:{status:'wait'}})
     // let UpdateResult = await History.updateMany({iditem: req.body.iditem, }, {$set:{notistatus:'accept'}})
     // result = result.toObject();
     if (result) {
