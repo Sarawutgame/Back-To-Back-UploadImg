@@ -170,6 +170,9 @@ const PostSchema = new mongoose.Schema({
   like: {
     type: Number,
   },
+  imageuserpath: {
+    type: String,
+  },
   // comments: {
   //   type: Array,
   // },
