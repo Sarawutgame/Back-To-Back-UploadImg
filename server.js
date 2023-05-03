@@ -719,7 +719,8 @@ app.put("/Banitem", async (req, res) => {
     // let updateitem = await Item.updateOne({_id:req.body.iditem}, {$set:{status:'complete'}})
     // let updatelose = await History.updateMany({iditem: req.body.iditem}, {$set:{notistatus:'lose'}})
     // let updateprice = await Item.updateMany({_id: req.body.iditem}, {$set:{bitprice:req.body.bitprice, iduserwinbit:req.body.usernamerequest}})
-
+    let updateReport = await Report.updateOne({_id:req.body.idreport}, {$set:{statusReport:'done'}})
+    let updateitem = await Item.updateOne({_id:req.body.iditem}, {$set:{ban:true}})
 
     // result = result.toObject();
     if (updateitem) {
