@@ -161,6 +161,16 @@ const ItemSchema = new mongoose.Schema({
     },
 
 })
+
+const TagSchema = new mongoose.Schema({
+  tagname: {
+    type: String,
+  },
+  tagprice: {
+    type: String,
+  }
+})
+
 const PostSchema = new mongoose.Schema({
   userId: {
     type: String,
@@ -317,6 +327,7 @@ const Report = mongoose.model('reports', ReportSchema);
 const History = mongoose.model('history', HistoryNotiSchema);
 const Receive = mongoose.model('receive', ReceiveNotiSchema);
 const Comment = mongoose.model("comment", CommentSchema);
+const Tag = mongoose.model("tag", TagSchema);
 
 User.createIndexes();
 Item.createIndexes();
@@ -325,6 +336,7 @@ Report.createIndexes();
 History.createIndexes();
 Receive.createIndexes();
 Comment.createIndexes();
+Tag.createIndexes();
 
 mongoose.connection.on(
     "error",
@@ -581,6 +593,22 @@ app.post("/createRequest", async (req, res) => {
   }
 })
 
+app.post("/createTag", async (req, res) => {
+  try{
+    const tag = new Tag(req.body);
+    let result = await tag.save();
+    result = result.toObject();
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't create tag");
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong");
+  }
+})
+
 
 app.get("/getnotiHistory/:id", async (req, res) => {
   try {
@@ -701,6 +729,16 @@ app.put("/stopBit", async (req, res) => {
   }
 })
 
+app.get("/getTag", async (req, res) => {
+  try {
+    const allTag = await Tag.find();
+    res.send(allTag);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Can't Find Tag");
+  }
+})
+
 app.get("/getReport", async (req, res) => {
   try {
     const allReport = await Report.find();
@@ -734,9 +772,37 @@ app.put("/Banitem", async (req, res) => {
   }
 })
 
+app.put("/updateTag", async (req, res) => {
+  try {
+    let result = await Tag.updateOne({_id:req.body.id}, {$set:{tagprice: req.body.price}})
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't Update Tag")
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong")
+  }
+})
+
 
 app.post('/uploadProfile', uploadProfile.single('avatar'), (req, res) => {
   return res.send({fileurl: req.file.location});
+})
+
+app.delete('/deleteTag', async (req, res) => {
+  try {
+    let result = await Tag.deleteOne({_id: req.body.id})
+    if (result) {
+      res.send(req.body);
+    } else {
+      console.log("Can't Delete Tag")
+    }
+  } catch (e) {
+    console.log(e);
+    res.send("Something went wrong")
+  }
 })
 
 
