@@ -436,7 +436,10 @@ app.put('/updateUser/:id', async (req, res) => {
         ig: req.body.ig,
         fb: req.body.fb,
         twit: req.body.twit,
-        line: req.body.line
+        line: req.body.line,
+        imageuserpath: req.body.imageuserpath,
+        role: req.body.role,
+        ban: req.body.ban
       }}
     )
 
